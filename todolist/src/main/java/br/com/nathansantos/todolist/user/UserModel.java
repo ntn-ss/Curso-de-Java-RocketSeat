@@ -1,18 +1,39 @@
 package br.com.nathansantos.todolist.user;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.Data;
+/** se eu desejar apenas getters,
+ * import lombok.Getter;
+ * se eu desejar apenas setters,
+ * import lombok.Setter;
+ * com estas anotações:
+ 
+// @Getter
+// @Setter
+*/
+
+@Data
+@Entity(name="tb_users") // converter objeto e atributo para registro SQL
 public class UserModel {
-    private String name;
+    
+    @Id //informa que será a chave primária
+    @GeneratedValue(generator = "UUID")
+    private UUID id;
+
+    @Column(name="usuario", unique=true)
     private String username;
+
+    private String name;
     private String password;
 
-    public String getName() {
-        return this.name;
-    }
-    public String getUsername() {
-        return this.username;
-    }
-    public String getPassword() {
-        return this.password;
-    }
-
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }
