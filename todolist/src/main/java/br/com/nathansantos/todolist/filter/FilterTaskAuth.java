@@ -23,8 +23,9 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
             throws ServletException, IOException {
-
-                /***
+                var servletPath = req.getServletPath();
+                if (servletPath.startsWith("/tasks/")) {
+                    /***
                     * pegar a autenticação (usuário e senha)
                     * interpretar usuário e senha
                     * procurar usuário
@@ -61,9 +62,16 @@ public class FilterTaskAuth extends OncePerRequestFilter {
                     }
                     else {
                         // seguir em frente
+                        req.setAttribute("idUser", user.getId());
                         filterChain.doFilter(req, res);
                     }
                 }
+                }
+                else {
+                        // seguir em frente
+                        filterChain.doFilter(req, res);
+                    }
+                
     }
     
 }
