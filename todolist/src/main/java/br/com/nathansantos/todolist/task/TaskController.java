@@ -49,16 +49,29 @@ public class TaskController {
     }
     
     @PutMapping("/{idTask}")
-    public TaskModel update(@RequestBody TaskModel taskModel, @PathVariable UUID idTask, HttpServletRequest req){
+    public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID idTask, HttpServletRequest req){
         
         var task = this.taskRepository.findById(idTask).orElse(null);
+
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Tarefa não encontrada.");
+        }
+
+        var idUser = req.getAttribute("idUser");
+        
+        if (!task.getIdUser().equals(idUser)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Você não pode editar tarefas fora de sua posse.");
+        }
 
         LocalDateTime rightNow = LocalDateTime.now();
         task.setCreatedAt(rightNow);
         
         Utils.copyNonNullproperties(taskModel, task);
 
-        return this.taskRepository.save(task);
+        var updatedTask = this.taskRepository.save(task);
+        return ResponseEntity.ok().body(updatedTask);
 
     }
 }
